@@ -6,12 +6,8 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var message = require('./routes/message');
 
-if (!process.env.TELEGRAM_API_TOKEN){
-	throw new Error('No TELEGRAM_API_TOKEN set in environment variables.');
-}
-
+// setup telegram client with webhook
 var client = require('./client');
-
 var webhookToken = process.env.WEBHOOK_TOKEN || randomstring.generate(16);
 client.setWebhook(process.env.BASE_URL + '/' + webhookToken);
 
@@ -21,8 +17,13 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
+// handle requests
 app.use('/' + webhookToken, message);
 app.use('/', index);
+
+app.get('/jo',(req,res)=>{
+  res.send('<h1>hello :)</h1>')
+})
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
